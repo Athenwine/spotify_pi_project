@@ -1,85 +1,71 @@
-# 🎧 Projet BI & IA – Analyse des tendances musicales Spotify
+# 🎧 BI & AI Project – Spotify Music Trends Analysis
 
-Ce projet de Business Intelligence, réalisé dans le cadre du Master 1 Business Analytics (2024-2025), vise à analyser les tendances musicales issues de données Spotify, puis à les valoriser à travers des visualisations interactives et une application web de recommandation personnalisée.
+This Business Intelligence project, completed as part of the Master's in Business Analytics (2024–2025), focuses on analyzing Spotify music trends and showcasing insights through interactive dashboards and a personalized recommendation web app.
 
-## 🚀 Objectifs du projet
+## 🚀 Project Goals
 
-- Identifier les tendances musicales (par genre, tempo, popularité…)
-- Comprendre les corrélations entre caractéristiques audio et succès commercial
-- Construire une base de données relationnelle optimisée pour l’analyse musicale
-- Développer un tableau de bord Power BI dynamique
-- Créer une application web de recommandation musicale
+* Detect music trends (genres, tempo, popularity, etc.)
+* Understand correlations between audio features and commercial success
+* Build an optimized relational database for music analytics
+* Develop a dynamic Power BI dashboard
+* Create a personalized music recommendation web app
 
----
+## 📚 Methodology: CRISP-DM
 
-## 📚 Méthodologie : CRISP-DM
+The project follows the CRISP-DM framework:
 
-Le projet suit les étapes de la méthodologie CRISP-DM :
+1. **Business Understanding**: Identifying user needs (labels, artists, platforms)
+2. **Data Understanding**: Exploratory analysis using Spotify and Kaggle datasets
+3. **Data Preparation**: Cleaning, normalization, and PostgreSQL structuring
+4. **Modeling**: Correlation studies, KPIs, and a KNN recommendation model
+5. **Evaluation**: Interpreting insights with a business perspective
+6. **Deployment**: Power BI dashboards + interactive web app
 
-1. **Compréhension métier** : Identifier les besoins des utilisateurs (labels, artistes, plateformes)
-2. **Compréhension des données** : Analyse exploratoire des données Spotify et Kaggle
-3. **Préparation des données** : Nettoyage, normalisation, structuration PostgreSQL
-4. **Modélisation** : Corrélations, KPIs, modèle KNN pour la recommandation
-5. **Évaluation** : Interprétation des résultats métier
-6. **Déploiement** : Tableau de bord Power BI et site web interactif
+## 🧠 Data Sources
 
----
+* **Spotify API (Spotipy)**: Audio features (tempo, loudness, energy, danceability, popularity, etc.)
+* **Kaggle**: Historical datasets and additional genre info
+* **PostgreSQL Database**: Implemented using a constellation schema
 
-## 🧠 Données utilisées
+## 📈 Key Performance Indicators (KPIs)
 
-- **API Spotify (Spotipy)** : Caractéristiques audio (tempo, loudness, energy, danceability, popularity…)
-- **Kaggle** : Données historiques et genres complémentaires
-- **Base PostgreSQL** : Modélisation en schéma en constellation
+* 📊 **Loudness Trends**: Evolution of average song volume
+* 🎼 **Emerging Genres**: New styles rising in popularity
+* 💃 **Danceability vs Popularity**: Do danceable tracks perform better?
+* ⏱ **Tempo Evolution**: Are songs getting faster over time?
 
----
+## 🔍 Analytical Results
 
-## 📈 Indicateurs clés (KPI)
+* Strong correlation between energy and loudness
+* Lower popularity for highly acoustic tracks
+* Dominant genres: pop, dance, hip-hop
+* Song length decreasing steadily after 2015
 
-- 📊 **Loudness** : Volume sonore moyen des chansons dans le temps
-- 🎼 **Genres émergents** : Nouveaux styles gagnant en popularité
-- 💃 **Danceability & Popularité** : Les morceaux dansants sont-ils les plus populaires ?
-- ⏱ **Évolution du tempo** : Les rythmes accélèrent-ils pour séduire ?
+## 📊 Power BI Dashboards
 
----
+Three interactive dashboards were built to visualize the insights:
 
-## 🔍 Résultats analytiques
 
-- **Corrélation forte** entre énergie et volume sonore
-- **Popularité négative** des morceaux très acoustiques
-- **Genres dominants** : pop, dance, hip hop
-- **Tendance au raccourcissement** des chansons depuis 2015
+> ![Dashboard Spotify](https://github.com/Athenwine/spotify_pi_project/blob/main/dashboard.png?raw=true)
 
----
+## 🌐 Interactive Web Application
 
-## 📊 Dashboards Power BI
+Built with Flask, HTML/CSS/JS, the app features:
 
-Trois tableaux de bord interactifs ont été développés pour visualiser les résultats :
+* Similar song recommendations
+* Playlist generation based on mood (party, chill, etc.)
+* Visual comparison of tracks (radar chart)
+* Exploration by year or artist
+* Clean, responsive, and modern UI
 
-> ![Dashboard Spotify](https://github.com/NajlaN/Spotify_PI/blob/main/dashboard.png?raw=true)
+## 🛠 Technical Architecture
 
----
+* **Backend**: Flask + PostgreSQL + KNN model
+* **Frontend**: HTML/CSS + JavaScript + Chart.js
+* **REST API**: Smooth communication between layers
 
-## 🌐 Application Web interactive
-
-Développée avec **Flask**, **HTML/CSS/JS**, l'application propose :
-
-- Recommandation de chansons similaires
-- Génération de playlists selon l’humeur (party, chill…)
-- Comparaison visuelle de morceaux (radar chart)
-- Exploration par année ou artiste
-- Expérience responsive, simple et moderne
-
-### 🛠 Architecture technique
-
-- **Backend** : Flask + PostgreSQL + modèle KNN
-- **Frontend** : HTML/CSS + JS + Chart.js
-- **API REST** : Communication fluide entre les couches
-
----
-
-## 📁 Structure du dépôt
-
-```bash
+## 📁 Repository Structure
+```
 📦 Spotify_PI
  ┣ 📊 data/
  ┣ 📁 notebooks/
@@ -88,3 +74,20 @@ Développée avec **Flask**, **HTML/CSS/JS**, l'application propose :
  ┣ 📄 requirements.txt
  ┣ 📄 README.md
  ┗ 📁 templates/
+```
+
+## 🚀 Getting Started
+
+### Prerequisites
+```bash
+pip install -r requirements.txt
+```
+
+### Running the Application
+```bash
+python app.py
+```
+
+---
+
+**Note**: This project was developed as part of the Master's in Business Analytics program (2024–2025).
