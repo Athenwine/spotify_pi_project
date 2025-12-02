@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compare Songs | Spotify Explorer</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Compare Songs</h1>
+            <p>See how different songs compare in audio features</p>
+        </header>
+
+        <nav class="secondary-nav">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="recommendations.html" class="nav-link">Recommendations</a>
+            <a href="mood.html" class="nav-link">Moods</a>
+            <a href="time-machine.html" class="nav-link">Time Machine</a>
+            <a href="artist.html" class="nav-link">Artist Search</a>
+        </nav>
+
+        <section class="section">
+            <h2 class="section-title">Compare Two Songs</h2>
+            <div>
+                <input type="text" id="song1" placeholder="First song">
+                <input type="text" id="song2" placeholder="Second song">
+                <button onclick="compareSongs()">Compare</button>
+            </div>
+            <div class="chart-container">
+                <canvas id="comparisonChart"></canvas>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        let comparisonChart;
+
+        async function compareSongs() {
+            const song1 = document.getElementById('song1').value.trim();
+            const song2 = document.getElementById('song2').value.trim();
+
+            if (!song1 || !song2) {
+                alert('Please enter two song names');
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:5000/compare', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ song1: song1, song2: song2 })
+                });
+
+                if (!response.ok) {
+                    throw new Error(await response.text());
+                }
+
+                const songs = await response.json();
+
+                if (songs.length < 2) {
+                    throw new Error('Could not find both songs');
+                }
+
+                const ctx = document.getElementById('comparisonChart').getContext('2d');
+
+                if (comparisonChart) {
+                    comparisonChart.destroy();
+                }
+
+                comparisonChart = new Chart(ctx, {
+                    type: 'radar',
+                    data: {
+                        labels: ['Danceability', 'Energy', 'Loudness', 'Acousticness', 'Instrumentalness', 'Valence'],
+                        datasets: [{
+                            label: songs[0].track_name,
+                            data: [
+                                songs[0].danceability * 100,
+                                songs[0].energy * 100,
+                                (songs[0].loudness + 60) * 2,
+                                songs[0].acousticness * 100,
+                                songs[0].instrumentalness * 100,
+                                songs[0].valence * 100
+                            ],
+                            backgroundColor: 'rgba(29, 185, 84, 0.2)',
+                            borderColor: 'rgba(29, 185, 84, 1)',
+                            borderWidth: 2
+                        }, {
+                            label: songs[1].track_name,
+                            data: [
+                                songs[1].danceability * 100,
+                                songs[1].energy * 100,
+                                (songs[1].loudness + 60) * 2,
+                                songs[1].acousticness * 100,
+                                songs[1].instrumentalness * 100,
+                                songs[1].valence * 100
+                            ],
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            r: {
+                                angleLines: { display: true },
+                                suggestedMin: 0,
+                                suggestedMax: 100,
+                                ticks: { stepSize: 20 }
+                            }
+                        },
+                        plugins: {
+                            legend: { position: 'top' },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return context.dataset.label + ': ' + context.raw.toFixed(1);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+    </script>
+</body>
+</html>

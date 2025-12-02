@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood Playlists | Spotify Explorer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Mood Playlists</h1>
+            <p>Discover music that matches your mood</p>
+        </header>
+
+        <nav class="secondary-nav">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="recommendations.html" class="nav-link">Recommendations</a>
+            <a href="compare.html" class="nav-link">Compare</a>
+            <a href="time-machine.html" class="nav-link">Time Machine</a>
+            <a href="artist.html" class="nav-link">Artist Search</a>
+        </nav>
+
+        <section class="section">
+            <h2 class="section-title">Select Your Mood</h2>
+            <p>Generate playlists based on your current mood:</p>
+            <div class="mood-buttons">
+                <button id="party-btn" class="mood-btn" onclick="getMoodPlaylist('party')">🎉 Party</button>
+                <button id="chill-btn" class="mood-btn" onclick="getMoodPlaylist('chill')">🍃 Chill</button>
+                <button id="sad-btn" class="mood-btn" onclick="getMoodPlaylist('sad')">😢 Sad</button>
+                <button id="focus-btn" class="mood-btn" onclick="getMoodPlaylist('focus')">📚 Focus</button>
+            </div>
+            <div id="moodResults" class="results"></div>
+        </section>
+    </div>
+
+    <script>
+        async function getMoodPlaylist(mood) {
+            const moodNames = {
+                'party': 'Party 🎉',
+                'chill': 'Chill 🍃',
+                'sad': 'Sad 😢',
+                'focus': 'Focus 📚'
+            };
+
+            showLoading('moodResults');
+
+            try {
+                const response = await fetch('http://localhost:5000/mood', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ mood: mood })
+                });
+
+                if (!response.ok) {
+                    throw new Error(await response.text());
+                }
+
+                const songs = await response.json();
+
+                let html = `<h3>${moodNames[mood]} Playlist</h3>`;
+                songs.forEach(song => {
+                    html += `
+                        <div class="song-card">
+                            <div class="song-name">${song.track_name}</div>
+                            <div class="artist">by ${song.artist_name}</div>
+                            <div class="features">
+                                <span class="feature">Energy: ${Math.round(song.energy * 100)}%</span>
+                                <span class="feature">Valence: ${Math.round(song.valence * 100)}%</span>
+                            </div>
+                        </div>
+                        `;
+                });
+
+                document.getElementById('moodResults').innerHTML = html;
+            } catch (error) {
+                showError('moodResults', error.message);
+            }
+        }
+
+        function showLoading(elementId) {
+            document.getElementById(elementId).innerHTML = '<p>Loading...</p>';
+        }
+
+        function showError(elementId, message) {
+            document.getElementById(elementId).innerHTML = `
+                    <div class="error">
+                        <p>${message}</p>
+                        <p>Please try again</p>
+                    </div>
+                `;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Machine | Spotify Explorer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Time Machine</h1>
+            <p>Discover popular songs from any year</p>
+        </header>
+
+        <nav class="secondary-nav">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="recommendations.html" class="nav-link">Recommendations</a>
+            <a href="mood.html" class="nav-link">Moods</a>
+            <a href="compare.html" class="nav-link">Compare</a>
+            <a href="artist.html" class="nav-link">Artist Search</a>
+        </nav>
+
+        <section class="section">
+            <h2 class="section-title">Travel Through Music History</h2>
+            <p>Discover the most energetic songs from any year:</p>
+            <div class="time-machine">
+                <input type="range" id="yearSlider" min="2000" max="2023" value="2015">
+                <span id="yearDisplay">2015</span>
+                <button onclick="loadYearSongs()">Travel</button>
+            </div>
+            <div id="timeResults" class="results"></div>
+        </section>
+    </div>
+
+    <script>
+        // Initialize year slider display
+        document.getElementById('yearSlider').addEventListener('input', function() {
+            document.getElementById('yearDisplay').textContent = this.value;
+        });
+
+        async function loadYearSongs() {
+            const year = document.getElementById('yearSlider').value;
+
+            showLoading('timeResults');
+
+            try {
+                const response = await fetch(`http://localhost:5000/time-machine/${year}`);
+
+                if (!response.ok) {
+                    throw new Error(await response.text());
+                }
+
+                const songs = await response.json();
+
+                let html = `<h3>Top Songs of ${year}</h3>`;
+                songs.forEach((song, index) => {
+                    html += `
+                        <div class="song-card">
+                            <div class="song-name">${index + 1}. ${song.track_name}</div>
+                            <div class="artist">by ${song.artist_name}</div>
+                            <div class="features">
+                                <span class="feature">Energy: ${Math.round(song.energy * 100)}%</span>
+                                <span class="feature">Tempo: ${Math.round(song.tempo)} BPM</span>
+                                <span class="feature">Year: ${song.year || 'Unknown'}</span>
+                            </div>
+                        </div>
+                        `;
+                });
+
+                document.getElementById('timeResults').innerHTML = html;
+            } catch (error) {
+                showError('timeResults', error.message);
+            }
+        }
+
+        function showLoading(elementId) {
+            document.getElementById(elementId).innerHTML = '<p>Loading...</p>';
+        }
+
+        function showError(elementId, message) {
+            document.getElementById(elementId).innerHTML = `
+                    <div class="error">
+                        <p>${message}</p>
+                        <p>Please try again</p>
+                    </div>
+                `;
+        }
+    </script>
+</body>
+</html>

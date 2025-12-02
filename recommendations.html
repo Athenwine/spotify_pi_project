@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Song Recommendations | Spotify Explorer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Song Recommendations</h1>
+            <p>Find songs similar to your favorites</p>
+        </header>
+
+        <nav class="secondary-nav">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="mood.html" class="nav-link">Moods</a>
+            <a href="compare.html" class="nav-link">Compare</a>
+            <a href="time-machine.html" class="nav-link">Time Machine</a>
+            <a href="artist.html" class="nav-link">Artist Search</a>
+        </nav>
+
+        <section class="section">
+            <h2 class="section-title">Find Similar Songs</h2>
+            <div>
+                <input type="text" id="songInput" placeholder="Enter a song name...">
+                <button onclick="getRecommendations()">Find Similar Songs</button>
+            </div>
+            <div id="recommendationResults" class="results"></div>
+        </section>
+    </div>
+
+    <script>
+        async function getRecommendations() {
+            const songName = document.getElementById('songInput').value.trim();
+            if (!songName) {
+                showError('recommendationResults', 'Please enter a song name');
+                return;
+            }
+
+            showLoading('recommendationResults');
+
+            try {
+                const response = await fetch('http://localhost:5000/recommend', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ song_name: songName })
+                });
+
+                if (!response.ok) {
+                    throw new Error(await response.text());
+                }
+
+                const data = await response.json();
+
+                let html = `
+                        <div class="song-card">
+                            <div class="song-name">${data.input_song.track_name}</div>
+                            <div class="artist">by ${data.input_song.artist_name}</div>
+                            <p>Similar songs:</p>
+                    `;
+
+                data.recommendations.forEach(song => {
+                    html += `
+                        <div class="song-card">
+                            <div class="song-name">${song.track_name}</div>
+                            <div class="artist">by ${song.artist_name}</div>
+                            <div class="features">
+                                <span class="feature">Dance: ${Math.round(song.danceability * 100)}%</span>
+                                <span class="feature">Energy: ${Math.round(song.energy * 100)}%</span>
+                                <span class="feature">Tempo: ${Math.round(song.tempo)} BPM</span>
+                            </div>
+                        </div>
+                        `;
+                });
+
+                document.getElementById('recommendationResults').innerHTML = html;
+            } catch (error) {
+                showError('recommendationResults', error.message);
+            }
+        }
+
+        function showLoading(elementId) {
+            document.getElementById(elementId).innerHTML = '<p>Loading...</p>';
+        }
+
+        function showError(elementId, message) {
+            document.getElementById(elementId).innerHTML = `
+                    <div class="error">
+                        <p>${message}</p>
+                        <p>Please try again</p>
+                    </div>
+                `;
+        }
+    </script>
+</body>
+</html>
